@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>英単語学習ツール</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 15px; shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #333; font-size: 1.5rem; }
+        .question { font-size: 2rem; margin: 20px 0; color: #007bff; font-weight: bold; }
+        input[type="text"] { width: 80%; padding: 12px; font-size: 1.2rem; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 20px; outline: none; }
+        input[type="text"]:focus { border-color: #007bff; }
+        .feedback { font-size: 3rem; height: 4rem; margin-top: 10px; }
+        .correct { color: #28a745; }
+        .incorrect { color: #dc3545; }
+        button { padding: 10px 20px; font-size: 1rem; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; }
+        .progress { margin-top: 20px; font-size: 0.9rem; color: #666; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>英単語スペル練習</h1>
+    <div class="progress" id="progress">1 / 17</div>
+    <div class="question" id="jp-word">読み込み中...</div>
+    
+    <input type="text" id="answer-input" placeholder="スペルを入力" autocomplete="off" autocapitalize="off" spellcheck="false">
+    
+    <div class="feedback" id="feedback"></div>
+    <button onclick="nextQuestion()" id="next-btn" style="display:none;">次へ</button>
+</div>
+
+<script>
+    // 1. ターゲット単語データ（将来的に1700語まで拡張可能）
+    const wordList = [
+        {en:"let", jp:"～させる"}, {en:"create", jp:"～をつくり出す"}, {en:"cause", jp:"を引き起こす"},
+        {en:"increase", jp:"増加する"}, {en:"leave", jp:"～のままにしておく"}, {en:"develop", jp:"を開発する"},
+        {en:"reduce", jp:"を減らす"}, {en:"improve", jp:"を進歩させる"}, {en:"produce", jp:"を作る"},
+        {en:"agree", jp:"同意する"}, {en:"tell", jp:"わかる"}, {en:"allow", jp:"を許す"},
+        {en:"prepare", jp:"準備する"}, {en:"own", jp:"を所有している"}, {en:"check", jp:"を検査する"},
+        {en:"suggest", jp:"を提案する"}, {en:"cost", jp:"費用がかかる"}
+    ];
+
+    let currentIndex = 0;
+
+    const jpDisplay = document.getElementById('jp-word');
+    const inputField = document.getElementById('answer-input');
+    const feedback = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const progressDisplay = document.getElementById('progress');
+
+    // 初期化
+    function init() {
+        showQuestion();
+        inputField.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkAnswer();
+        });
+    }
+
+    // 出題
+    function showQuestion() {
+        const currentWord = wordList[currentIndex];
+        jpDisplay.textContent = currentWord.jp;
+        inputField.value = '';
+        inputField.style.display = 'block';
+        feedback.textContent = '';
+        nextBtn.style.display = 'none';
+        progressDisplay.textContent = `${currentIndex + 1} / ${wordList.length}`;
+        inputField.focus();
+    }
+
+    // 正誤判定
+    function checkAnswer() {
+        const userAnswer = inputField.value.trim().toLowerCase();
+        const correctAnswer = wordList[currentIndex].en.toLowerCase();
+
+        if (userAnswer === correctAnswer) {
+            feedback.textContent = '〇';
+            feedback.className = 'feedback correct';
+            speak(correctAnswer);
+            inputField.style.display = 'none';
+            nextBtn.style.display = 'inline-block';
+            nextBtn.focus();
+        } else {
+            feedback.textContent = '×';
+            feedback.className = 'feedback incorrect';
+            inputField.value = '';
+        }
+    }
+
+    // 次へ
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex < wordList.length) {
+            showQuestion();
+        } else {
+            jpDisplay.textContent = "全問終了！";
+            inputField.style.display = 'none';
+            nextBtn.style.display = 'none';
+            progressDisplay.textContent = "";
+        }
+    }
+
+    // 音声読み上げ
+    function speak(text) {
+        const uttr = new SpeechSynthesisUtterance(text);
+        uttr.lang = 'en-US';
+        window.speechSynthesis.speak(uttr);
+    }
+
+    init();
+</script>
+
+</body>
+</html>
