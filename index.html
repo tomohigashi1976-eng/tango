@@ -3,80 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>英単語特訓ツール PRO</title>
+    <title>英単語特訓 PRO v2.1</title>
     <style>
         :root { --primary: #007bff; --success: #28a745; --danger: #dc3545; --gray: #6c757d; --bg: #f8f9fa; }
-        body { font-family: sans-serif; text-align: center; background-color: var(--bg); margin: 0; padding: 20px; color: #333; touch-action: manipulation; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-align: center; background-color: var(--bg); margin: 0; padding: 15px; color: #333; touch-action: manipulation; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         
         .screen { display: none; }
         .active { display: block; }
         
-        h2 { font-size: 1.1rem; margin-bottom: 15px; color: var(--gray); }
-        .setup-group { margin-bottom: 15px; text-align: left; background: #f0f2f5; padding: 15px; border-radius: 10px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; }
-        input[type="number"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 1rem; }
+        .setup-group { margin-bottom: 20px; text-align: left; background: #f1f3f5; padding: 15px; border-radius: 12px; }
+        label { display: block; margin-bottom: 10px; font-weight: bold; color: #444; }
         
-        .mode-selector { display: flex; gap: 10px; margin-bottom: 15px; }
-        .mode-btn { flex: 1; padding: 15px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; font-weight: bold; }
-        .mode-btn.selected { border-color: var(--primary); background: #e7f1ff; color: var(--primary); }
+        .option-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .opt-btn { flex: 1; padding: 12px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        .opt-btn.selected { border-color: var(--primary); background: #e7f1ff; color: var(--primary); }
 
-        .question-label { color: var(--gray); font-size: 0.9rem; margin-bottom: 10px; }
-        .target-word { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin: 20px 0; min-height: 3.5rem; }
-        .recognition-box { min-height: 80px; border: 2px dashed #ccc; border-radius: 10px; margin: 20px 0; padding: 15px; background: #fffcf0; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #444; }
+        /* 学習画面 */
+        .target-word { font-size: 3rem; font-weight: 800; color: var(--primary); margin: 25px 0; }
         
-        .answer-display { font-size: 2rem; font-weight: bold; color: #333; margin: 20px 0; display: none; background: #eee; padding: 15px; border-radius: 10px; }
+        /* 手書き入力エリアの強化 */
+        .input-area { margin: 20px 0; }
+        .handwriting-input { 
+            width: 100%; 
+            height: 120px; /* 高さを大幅にアップ */
+            padding: 15px; 
+            font-size: 2.5rem; /* 文字も大きく */
+            border: 3px solid #007bff; /* 枠を強調 */
+            border-radius: 15px; 
+            text-align: center; 
+            outline: none;
+            box-sizing: border-box;
+            background: #fff;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .handwriting-input::placeholder { font-size: 1.2rem; color: #bbb; }
 
-        button { width: 100%; padding: 18px; font-size: 1.2rem; border: none; border-radius: 12px; cursor: pointer; transition: 0.1s; margin-top: 10px; font-weight: bold; }
-        .btn-start { background: var(--primary); color: white; margin-top: 20px; }
+        .recognition-box { min-height: 100px; border: 2px dashed #ccc; border-radius: 12px; margin: 20px 0; padding: 15px; background: #fffcf0; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #444; }
+        
+        .answer-display { font-size: 2.5rem; font-weight: bold; color: #333; margin: 20px 0; display: none; background: #e9ecef; padding: 20px; border-radius: 15px; border-left: 8px solid var(--primary); }
+
+        button.main-btn { width: 100%; padding: 20px; font-size: 1.4rem; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-start { background: var(--primary); color: white; }
         .btn-show { background: var(--gray); color: white; }
         .btn-correct { background: var(--success); color: white; width: 48%; }
         .btn-wrong { background: var(--danger); color: white; width: 48%; }
         .btn-group { display: flex; justify-content: space-between; display: none; }
-        button:active { opacity: 0.7; transform: scale(0.97); }
+        
+        #progress-text { font-weight: bold; color: var(--gray); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="setup-screen" class="screen active">
-        <h1>特訓セッティング</h1>
-        
+        <h1>特訓設定</h1>
         <div class="setup-group">
-            <label>1. モード選択</label>
-            <div class="mode-selector">
-                <button class="mode-btn selected" id="mode-en-jp" onclick="setMode('en-jp')">英語 → 日本語</button>
-                <button class="mode-btn" id="mode-jp-en" onclick="setMode('jp-en')">日本語 → 英語</button>
+            <label>学習モード</label>
+            <div class="option-group">
+                <button class="opt-btn selected" id="m-en-jp" onclick="setMode('en-jp')">英→日</button>
+                <button class="opt-btn" id="m-jp-en" onclick="setMode('jp-en')">日→英</button>
             </div>
         </div>
-
         <div class="setup-group">
-            <label>2. 出題範囲 (1-17)</label>
-            <div style="display:flex; gap:10px; align-items:center;">
-                <input type="number" id="range-start" value="1" min="1"> ～ <input type="number" id="range-end" value="17" max="17">
+            <label>回答方法</label>
+            <div class="option-group">
+                <button class="opt-btn selected" id="a-voice" onclick="setAnsMethod('voice')">音声入力</button>
+                <button class="opt-btn" id="a-write" onclick="setAnsMethod('write')">手書き</button>
+                <button class="opt-btn" id="a-none" onclick="setAnsMethod('none')">表示のみ</button>
             </div>
         </div>
-
         <div class="setup-group">
-            <label>3. 順序</label>
-            <select id="order-type">
-                <option value="asc">昇順 (1, 2, 3...)</option>
+            <label>範囲と順序</label>
+            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                <input type="number" id="range-start" value="1" style="width:80px; padding:10px;"> ～ <input type="number" id="range-end" value="17" style="width:80px; padding:10px;">
+            </div>
+            <select id="order-type" style="padding:10px; width:100%; border-radius:8px;">
+                <option value="asc">昇順</option>
                 <option value="rand">ランダム</option>
             </select>
         </div>
-
-        <button class="btn-start" onclick="startLesson()">トレーニング開始</button>
+        <button class="main-btn btn-start" onclick="startLesson()">トレーニング開始</button>
     </div>
 
     <div id="quiz-screen" class="screen">
-        <div class="question-label" id="progress-text">1 / 17</div>
+        <div id="progress-text">1 / 17</div>
         <div class="target-word" id="target-display">---</div>
         
-        <p style="font-size:0.8rem; color:gray; margin-bottom:5px;">【音声認識中...】</p>
-        <div class="recognition-box" id="voice-output">（聞き取り待機）</div>
-        
-        <button class="btn-show" id="show-answer-btn" onclick="revealAnswer()">回答を表示 / 判定へ</button>
-        
+        <div id="ui-voice" class="input-area">
+            <div class="recognition-box" id="voice-output">（聞き取り待機）</div>
+        </div>
+
+        <div id="ui-write" class="input-area" style="display:none;">
+            <input type="text" class="handwriting-input" id="text-answer" placeholder="ここにペンで大きく書く" autocomplete="off" spellcheck="false">
+        </div>
+
+        <button class="main-btn btn-show" id="show-answer-btn" onclick="revealAnswer()">回答を表示</button>
         <div class="answer-display" id="correct-answer">---</div>
         
         <div class="btn-group" id="judge-btns">
@@ -86,141 +108,117 @@
     </div>
 
     <div id="result-screen" class="screen">
-        <h1>一巡終了</h1>
-        <p id="result-summary" style="font-size:1.3rem;"></p>
-        <button class="btn-start" id="retry-btn" onclick="startReview()" style="display:none;">間違えた単語のみ復習</button>
-        <button class="btn-show" onclick="location.reload()">トップに戻る</button>
+        <h1>終了</h1>
+        <p id="result-summary" style="white-space:pre-wrap; font-size:1.2rem;"></p>
+        <button class="main-btn btn-start" id="retry-btn" onclick="startReview()" style="display:none;">間違えた分を復習</button>
+        <button class="main-btn btn-show" onclick="location.reload()">設定に戻る</button>
     </div>
 </div>
 
 <script>
     const masterList = [
-        {id:1, en:"let", jp:"～させる"}, {id:2, en:"create", jp:"～をつくり出す"}, {id:3, en:"cause", jp:"を引き起こす"},
-        {id:4, en:"increase", jp:"増加する"}, {id:5, en:"leave", jp:"～のままにしておく"}, {id:6, en:"develop", jp:"を開発する"},
-        {id:7, en:"reduce", jp:"を減らす"}, {id:8, en:"improve", jp:"を進歩させる"}, {id:9, en:"produce", jp:"を作る"},
-        {id:10, en:"agree", jp:"同意する"}, {id:11, en:"tell", jp:"わかる"}, {id:12, en:"allow", jp:"を許す"},
-        {id:13, en:"prepare", jp:"準備する"}, {id:14, en:"own", jp:"を所有している"}, {id:15, en:"check", jp:"を検査する"},
-        {id:16, en:"suggest", jp:"を提案する"}, {id:17, en:"cost", jp:"費用がかかる"}
+        {en:"let", jp:"～させる"}, {en:"create", jp:"～をつくり出す"}, {en:"cause", jp:"を引き起こす"},
+        {en:"increase", jp:"増加する"}, {en:"leave", jp:"～のままにしておく"}, {en:"develop", jp:"を開発する"},
+        {en:"reduce", jp:"を減らす"}, {en:"improve", jp:"を進歩させる"}, {en:"produce", jp:"を作る"},
+        {en:"agree", jp:"同意する"}, {en:"tell", jp:"わかる"}, {en:"allow", jp:"を許す"},
+        {en:"prepare", jp:"準備する"}, {en:"own", jp:"を所有している"}, {en:"check", jp:"を検査する"},
+        {en:"suggest", jp:"を提案する"}, {en:"cost", jp:"費用がかかる"}
     ];
 
-    let currentSessionList = [];
-    let wrongList = [];
-    let currentIndex = 0;
-    let mode = 'en-jp'; // デフォルト
-    let recognition;
+    let currentList = [], wrongList = [], currentIndex = 0;
+    let mode = 'en-jp', ansMethod = 'voice', recognition;
 
-    // 音声認識の初期化（日本語/英語どちらにも対応できるよう開始時に切り替え）
-    function initSpeech(lang) {
+    function setMode(m) {
+        mode = m;
+        document.getElementById('m-en-jp').classList.toggle('selected', m==='en-jp');
+        document.getElementById('m-jp-en').classList.toggle('selected', m==='jp-en');
+    }
+
+    function setAnsMethod(a) {
+        ansMethod = a;
+        document.getElementById('a-voice').classList.toggle('selected', a==='voice');
+        document.getElementById('a-write').classList.toggle('selected', a==='write');
+        document.getElementById('a-none').classList.toggle('selected', a==='none');
+    }
+
+    function initRecognition() {
         if (!('webkitSpeechRecognition' in window)) return;
-        if (recognition) recognition.stop();
-        
         recognition = new webkitSpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = (lang === 'en') ? 'en-US' : 'ja-JP';
-
-        recognition.onresult = (event) => {
-            let transcript = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                transcript += event.results[i][0].transcript;
-            }
-            document.getElementById('voice-output').textContent = transcript;
+        recognition.lang = (mode === 'jp-en') ? 'en-US' : 'ja-JP';
+        recognition.onresult = (e) => {
+            let t = '';
+            for (let i = e.resultIndex; i < e.results.length; ++i) t += e.results[i][0].transcript;
+            document.getElementById('voice-output').textContent = t;
         };
     }
 
-    function setMode(selectedMode) {
-        mode = selectedMode;
-        document.getElementById('mode-en-jp').classList.toggle('selected', mode === 'en-jp');
-        document.getElementById('mode-jp-en').classList.toggle('selected', mode === 'jp-en');
-    }
-
     function startLesson() {
-        const start = parseInt(document.getElementById('range-start').value) - 1;
-        const end = parseInt(document.getElementById('range-end').value);
-        const order = document.getElementById('order-type').value;
-
-        currentSessionList = masterList.slice(start, end);
-        if (order === 'rand') currentSessionList.sort(() => Math.random() - 0.5);
-
-        currentIndex = 0;
-        wrongList = [];
-        // 出題が日本語なら音声認識は英語、出題が英語なら音声認識は日本語
-        initSpeech(mode === 'jp-en' ? 'en' : 'ja');
+        const s = parseInt(document.getElementById('range-start').value)-1;
+        const e = parseInt(document.getElementById('range-end').value);
+        currentList = masterList.slice(s, e);
+        if (document.getElementById('order-type').value === 'rand') currentList.sort(()=>Math.random()-0.5);
+        currentIndex = 0; wrongList = [];
+        document.getElementById('ui-voice').style.display = (ansMethod==='voice') ? 'block' : 'none';
+        document.getElementById('ui-write').style.display = (ansMethod==='write') ? 'block' : 'none';
+        if (ansMethod==='voice') initRecognition();
         showScreen('quiz-screen');
         nextQuestion();
     }
 
     function nextQuestion() {
-        if (currentIndex >= currentSessionList.length) {
-            showResult();
-            return;
-        }
-        
-        const q = currentSessionList[currentIndex];
-        document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${currentSessionList.length}`;
-        
-        // モードによって表示を切り替え
-        document.getElementById('target-display').textContent = (mode === 'en-jp') ? q.en : q.jp;
-        
-        document.getElementById('voice-output').textContent = "（聞き取り待機中）";
+        if (currentIndex >= currentList.length) return showResult();
+        const q = currentList[currentIndex];
+        document.getElementById('progress-text').textContent = `${currentIndex+1} / ${currentList.length}`;
+        document.getElementById('target-display').textContent = (mode==='en-jp') ? q.en : q.jp;
+        document.getElementById('voice-output').textContent = "（待機中）";
+        document.getElementById('text-answer').value = "";
         document.getElementById('correct-answer').style.display = 'none';
         document.getElementById('judge-btns').style.display = 'none';
         document.getElementById('show-answer-btn').style.display = 'block';
-        
-        if (recognition) try { recognition.start(); } catch(e) {}
+        if (ansMethod==='voice' && recognition) try { recognition.start(); } catch(err){}
+        if (ansMethod==='write') setTimeout(() => document.getElementById('text-answer').focus(), 100);
     }
 
     function revealAnswer() {
         if (recognition) recognition.stop();
-        const q = currentSessionList[currentIndex];
+        const q = currentList[currentIndex];
         const ansDiv = document.getElementById('correct-answer');
-        
-        // 正解を表示（出題の逆）
-        ansDiv.textContent = (mode === 'en-jp') ? q.jp : q.en;
+        ansDiv.textContent = (mode==='en-jp') ? q.jp : q.en;
         ansDiv.style.display = 'block';
         document.getElementById('show-answer-btn').style.display = 'none';
         document.getElementById('judge-btns').style.display = 'flex';
         
-        // 英語の音声を流す（常に英語を流すと学習効率が良い）
+        // 改善された音声
         const uttr = new SpeechSynthesisUtterance(q.en);
         uttr.lang = 'en-US';
+        uttr.rate = 0.8;
+        uttr.pitch = 1.0;
         window.speechSynthesis.speak(uttr);
     }
 
-    function processJudge(isCorrect) {
-        if (!isCorrect) wrongList.push(currentSessionList[currentIndex]);
+    function processJudge(ok) {
+        if (!ok) wrongList.push(currentList[currentIndex]);
         currentIndex++;
         nextQuestion();
     }
 
     function showResult() {
         showScreen('result-screen');
-        document.getElementById('result-summary').textContent = `終了しました！\n間違い: ${wrongList.length} 件`;
-        document.getElementById('retry-btn').style.display = (wrongList.length > 0) ? 'block' : 'none';
+        document.getElementById('result-summary').textContent = `全工程が完了しました。\n今回の間違い: ${wrongList.length} 件`;
+        document.getElementById('retry-btn').style.display = (wrongList.length>0) ? 'block' : 'none';
     }
 
     function startReview() {
-        currentSessionList = [...wrongList];
-        wrongList = [];
-        currentIndex = 0;
-        showScreen('quiz-screen');
-        nextQuestion();
+        currentList = [...wrongList]; wrongList = []; currentIndex = 0;
+        showScreen('quiz-screen'); nextQuestion();
     }
 
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
-
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            const btn = document.getElementById('show-answer-btn');
-            if (document.getElementById('quiz-screen').classList.contains('active') && btn.style.display !== 'none') {
-                revealAnswer();
-            }
-        }
-    });
 </script>
-
 </body>
 </html>
