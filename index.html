@@ -3,86 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>英単語特訓ツール</title>
+    <title>英単語特訓ツール PRO</title>
     <style>
-        :root { --primary: #007bff; --success: #28a745; --danger: #dc3545; --gray: #6c757d; }
-        body { font-family: sans-serif; text-align: center; background-color: #f8f9fa; margin: 0; padding: 20px; color: #333; }
+        :root { --primary: #007bff; --success: #28a745; --danger: #dc3545; --gray: #6c757d; --bg: #f8f9fa; }
+        body { font-family: sans-serif; text-align: center; background-color: var(--bg); margin: 0; padding: 20px; color: #333; touch-action: manipulation; }
         .container { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         
-        /* 設定画面・結果画面 */
         .screen { display: none; }
         .active { display: block; }
         
-        h2 { font-size: 1.2rem; margin-bottom: 20px; }
-        .setup-group { margin-bottom: 20px; text-align: left; background: #f0f2f5; padding: 15px; border-radius: 10px; }
+        h2 { font-size: 1.1rem; margin-bottom: 15px; color: var(--gray); }
+        .setup-group { margin-bottom: 15px; text-align: left; background: #f0f2f5; padding: 15px; border-radius: 10px; }
         label { display: block; margin-bottom: 8px; font-weight: bold; }
-        input[type="number"], select { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; box-sizing: border-box; font-size: 1rem; }
+        input[type="number"], select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; font-size: 1rem; }
         
-        /* 学習画面 */
-        .question-label { color: var(--gray); font-size: 0.9rem; margin-bottom: 10px; }
-        .jp-word { font-size: 2.2rem; font-weight: bold; color: var(--primary); margin: 15px 0; }
-        .recognition-box { min-height: 60px; border: 2px dashed #ccc; border-radius: 10px; margin: 15px 0; padding: 10px; background: #fffcf0; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #555; }
-        
-        .answer-display { font-size: 1.8rem; font-weight: bold; color: #333; margin: 15px 0; display: none; background: #e9ecef; padding: 10px; border-radius: 10px; }
+        .mode-selector { display: flex; gap: 10px; margin-bottom: 15px; }
+        .mode-btn { flex: 1; padding: 15px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; font-weight: bold; }
+        .mode-btn.selected { border-color: var(--primary); background: #e7f1ff; color: var(--primary); }
 
-        /* ボタン類 */
-        button { width: 100%; padding: 15px; font-size: 1.1rem; border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; margin-top: 10px; font-weight: bold; }
-        .btn-start { background: var(--primary); color: white; }
+        .question-label { color: var(--gray); font-size: 0.9rem; margin-bottom: 10px; }
+        .target-word { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin: 20px 0; min-height: 3.5rem; }
+        .recognition-box { min-height: 80px; border: 2px dashed #ccc; border-radius: 10px; margin: 20px 0; padding: 15px; background: #fffcf0; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #444; }
+        
+        .answer-display { font-size: 2rem; font-weight: bold; color: #333; margin: 20px 0; display: none; background: #eee; padding: 15px; border-radius: 10px; }
+
+        button { width: 100%; padding: 18px; font-size: 1.2rem; border: none; border-radius: 12px; cursor: pointer; transition: 0.1s; margin-top: 10px; font-weight: bold; }
+        .btn-start { background: var(--primary); color: white; margin-top: 20px; }
         .btn-show { background: var(--gray); color: white; }
         .btn-correct { background: var(--success); color: white; width: 48%; }
         .btn-wrong { background: var(--danger); color: white; width: 48%; }
         .btn-group { display: flex; justify-content: space-between; display: none; }
-        button:active { opacity: 0.7; transform: scale(0.98); }
+        button:active { opacity: 0.7; transform: scale(0.97); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div id="setup-screen" class="screen active">
-        <h1>学習開始設定</h1>
+        <h1>特訓セッティング</h1>
+        
         <div class="setup-group">
-            <label>出題範囲 (全17語)</label>
+            <label>1. モード選択</label>
+            <div class="mode-selector">
+                <button class="mode-btn selected" id="mode-en-jp" onclick="setMode('en-jp')">英語 → 日本語</button>
+                <button class="mode-btn" id="mode-jp-en" onclick="setMode('jp-en')">日本語 → 英語</button>
+            </div>
+        </div>
+
+        <div class="setup-group">
+            <label>2. 出題範囲 (1-17)</label>
             <div style="display:flex; gap:10px; align-items:center;">
                 <input type="number" id="range-start" value="1" min="1"> ～ <input type="number" id="range-end" value="17" max="17">
             </div>
         </div>
+
         <div class="setup-group">
-            <label>出題順序</label>
+            <label>3. 順序</label>
             <select id="order-type">
-                <option value="asc">1: 昇順 (番号順)</option>
-                <option value="rand">2: ランダム</option>
+                <option value="asc">昇順 (1, 2, 3...)</option>
+                <option value="rand">ランダム</option>
             </select>
         </div>
+
         <button class="btn-start" onclick="startLesson()">トレーニング開始</button>
     </div>
 
     <div id="quiz-screen" class="screen">
         <div class="question-label" id="progress-text">1 / 17</div>
-        <div class="jp-word" id="target-jp">---</div>
+        <div class="target-word" id="target-display">---</div>
         
-        <p style="font-size:0.8rem; color:gray;">【音声入力待機中...】</p>
-        <div class="recognition-box" id="voice-output">（ここに聞き取った声が出ます）</div>
+        <p style="font-size:0.8rem; color:gray; margin-bottom:5px;">【音声認識中...】</p>
+        <div class="recognition-box" id="voice-output">（聞き取り待機）</div>
         
-        <button class="btn-show" id="show-answer-btn" onclick="revealAnswer()">回答を表示 (またはEnter)</button>
+        <button class="btn-show" id="show-answer-btn" onclick="revealAnswer()">回答を表示 / 判定へ</button>
         
         <div class="answer-display" id="correct-answer">---</div>
         
         <div class="btn-group" id="judge-btns">
             <button class="btn-correct" onclick="processJudge(true)">〇 正解</button>
-            <button class="btn-wrong" onclick="processJudge(false)">× 間違い</button>
+            <button class="btn-wrong" onclick="processJudge(false)">× 不正解</button>
         </div>
     </div>
 
     <div id="result-screen" class="screen">
         <h1>一巡終了</h1>
-        <p id="result-summary"></p>
-        <button class="btn-start" id="retry-btn" onclick="startReview()">間違えた単語のみ復習</button>
-        <button class="btn-show" onclick="location.reload()">最初からやり直す</button>
+        <p id="result-summary" style="font-size:1.3rem;"></p>
+        <button class="btn-start" id="retry-btn" onclick="startReview()" style="display:none;">間違えた単語のみ復習</button>
+        <button class="btn-show" onclick="location.reload()">トップに戻る</button>
     </div>
 </div>
 
 <script>
-    // 17語のデータ
     const masterList = [
         {id:1, en:"let", jp:"～させる"}, {id:2, en:"create", jp:"～をつくり出す"}, {id:3, en:"cause", jp:"を引き起こす"},
         {id:4, en:"increase", jp:"増加する"}, {id:5, en:"leave", jp:"～のままにしておく"}, {id:6, en:"develop", jp:"を開発する"},
@@ -95,37 +106,46 @@
     let currentSessionList = [];
     let wrongList = [];
     let currentIndex = 0;
+    let mode = 'en-jp'; // デフォルト
     let recognition;
 
-    // 音声認識の設定
-    if ('webkitSpeechRecognition' in window) {
+    // 音声認識の初期化（日本語/英語どちらにも対応できるよう開始時に切り替え）
+    function initSpeech(lang) {
+        if (!('webkitSpeechRecognition' in window)) return;
+        if (recognition) recognition.stop();
+        
         recognition = new webkitSpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
-        recognition.lang = 'en-US';
+        recognition.lang = (lang === 'en') ? 'en-US' : 'ja-JP';
 
         recognition.onresult = (event) => {
-            let interimTranscript = '';
+            let transcript = '';
             for (let i = event.resultIndex; i < event.results.length; ++i) {
-                interimTranscript += event.results[i][0].transcript;
+                transcript += event.results[i][0].transcript;
             }
-            document.getElementById('voice-output').textContent = interimTranscript;
+            document.getElementById('voice-output').textContent = transcript;
         };
     }
 
-    // 開始
+    function setMode(selectedMode) {
+        mode = selectedMode;
+        document.getElementById('mode-en-jp').classList.toggle('selected', mode === 'en-jp');
+        document.getElementById('mode-jp-en').classList.toggle('selected', mode === 'jp-en');
+    }
+
     function startLesson() {
         const start = parseInt(document.getElementById('range-start').value) - 1;
         const end = parseInt(document.getElementById('range-end').value);
         const order = document.getElementById('order-type').value;
 
         currentSessionList = masterList.slice(start, end);
-        if (order === 'rand') {
-            currentSessionList.sort(() => Math.random() - 0.5);
-        }
+        if (order === 'rand') currentSessionList.sort(() => Math.random() - 0.5);
 
         currentIndex = 0;
         wrongList = [];
+        // 出題が日本語なら音声認識は英語、出題が英語なら音声認識は日本語
+        initSpeech(mode === 'jp-en' ? 'en' : 'ja');
         showScreen('quiz-screen');
         nextQuestion();
     }
@@ -138,42 +158,45 @@
         
         const q = currentSessionList[currentIndex];
         document.getElementById('progress-text').textContent = `${currentIndex + 1} / ${currentSessionList.length}`;
-        document.getElementById('target-jp').textContent = q.jp;
+        
+        // モードによって表示を切り替え
+        document.getElementById('target-display').textContent = (mode === 'en-jp') ? q.en : q.jp;
+        
         document.getElementById('voice-output').textContent = "（聞き取り待機中）";
         document.getElementById('correct-answer').style.display = 'none';
         document.getElementById('judge-btns').style.display = 'none';
         document.getElementById('show-answer-btn').style.display = 'block';
         
-        if (recognition) recognition.start();
+        if (recognition) try { recognition.start(); } catch(e) {}
     }
 
     function revealAnswer() {
         if (recognition) recognition.stop();
         const q = currentSessionList[currentIndex];
         const ansDiv = document.getElementById('correct-answer');
-        ansDiv.textContent = q.en;
+        
+        // 正解を表示（出題の逆）
+        ansDiv.textContent = (mode === 'en-jp') ? q.jp : q.en;
         ansDiv.style.display = 'block';
         document.getElementById('show-answer-btn').style.display = 'none';
         document.getElementById('judge-btns').style.display = 'flex';
         
-        // 正解音声を流す
+        // 英語の音声を流す（常に英語を流すと学習効率が良い）
         const uttr = new SpeechSynthesisUtterance(q.en);
         uttr.lang = 'en-US';
         window.speechSynthesis.speak(uttr);
     }
 
     function processJudge(isCorrect) {
-        if (!isCorrect) {
-            wrongList.push(currentSessionList[currentIndex]);
-        }
+        if (!isCorrect) wrongList.push(currentSessionList[currentIndex]);
         currentIndex++;
         nextQuestion();
     }
 
     function showResult() {
         showScreen('result-screen');
-        document.getElementById('result-summary').textContent = `終了！ 間違えた単語: ${wrongList.length} 件`;
-        document.getElementById('retry-btn').style.display = wrongList.length > 0 ? 'block' : 'none';
+        document.getElementById('result-summary').textContent = `終了しました！\n間違い: ${wrongList.length} 件`;
+        document.getElementById('retry-btn').style.display = (wrongList.length > 0) ? 'block' : 'none';
     }
 
     function startReview() {
@@ -189,13 +212,11 @@
         document.getElementById(id).classList.add('active');
     }
 
-    // Enterキー対応
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            if (document.getElementById('quiz-screen').classList.contains('active')) {
-                if (document.getElementById('show-answer-btn').style.display !== 'none') {
-                    revealAnswer();
-                }
+            const btn = document.getElementById('show-answer-btn');
+            if (document.getElementById('quiz-screen').classList.contains('active') && btn.style.display !== 'none') {
+                revealAnswer();
             }
         }
     });
