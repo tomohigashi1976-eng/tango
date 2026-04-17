@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>でる順パス単 特訓アプリ</title>
+    <title>でる順パス単 1700特訓</title>
     <style>
         :root { --primary: #007bff; --success: #28a745; --danger: #dc3545; --gray: #6c757d; --bg: #f8f9fa; --clear: #adb5bd; }
         body { font-family: -apple-system, sans-serif; text-align: center; background-color: var(--bg); margin: 0; padding: 15px; color: #333; touch-action: manipulation; }
@@ -13,26 +13,14 @@
         .setup-group { margin-bottom: 20px; text-align: left; background: #f1f3f5; padding: 15px; border-radius: 12px; }
         label { display: block; margin-bottom: 10px; font-weight: bold; color: #444; }
         .option-group { display: flex; gap: 8px; flex-wrap: wrap; }
-        .opt-btn { flex: 1; padding: 15px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .opt-btn { flex: 1; min-width: 100px; padding: 15px; border: 2px solid #ddd; border-radius: 10px; background: white; cursor: pointer; font-weight: bold; font-size: 1rem; }
         .opt-btn.selected { border-color: var(--primary); background: #e7f1ff; color: var(--primary); }
-        
         .target-word { font-size: 3.5rem; font-weight: 800; color: var(--primary); margin: 25px 0; line-height: 1.2; }
-        
         .input-area { margin: 20px 0; }
-        .handwriting-input { 
-            width: 100%; height: 120px; padding: 15px; font-size: 2.5rem; 
-            border: 3px solid var(--primary); border-radius: 15px; 
-            text-align: center; outline: none; box-sizing: border-box; 
-            background: #fff; text-transform: lowercase; 
-        }
         .recognition-box { min-height: 100px; border: 2px dashed #ccc; border-radius: 12px; margin-bottom: 10px; padding: 15px; background: #fffcf0; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: #444; }
-        
-        /* クリアボタンのスタイル */
+        .handwriting-input { width: 100%; height: 120px; padding: 15px; font-size: 2.5rem; border: 3px solid var(--primary); border-radius: 15px; text-align: center; outline: none; box-sizing: border-box; background: #fff; text-transform: lowercase; }
         .btn-clear { background: var(--clear); color: white; padding: 12px; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 15px; }
-        
-        /* 回答表示（日本語）を特大に */
         .answer-display { font-size: 3.5rem; font-weight: bold; color: #d63384; margin: 20px 0; display: none; background: #fff0f6; padding: 20px; border-radius: 15px; border-left: 10px solid #d63384; word-break: break-all; line-height: 1.2; }
-        
         button.main-btn { width: 100%; padding: 22px; font-size: 1.5rem; border: none; border-radius: 15px; cursor: pointer; font-weight: bold; margin-top: 10px; }
         .btn-start { background: var(--primary); color: white; }
         .btn-show { background: var(--gray); color: white; }
@@ -46,55 +34,51 @@
 
 <div class="container">
     <div id="setup-screen" class="screen active">
-        <h1>でる順パス単</h1>
+        <h1>でる順パス単 1700</h1>
         <div class="setup-group">
-            <label>学習モード</label>
-            <div class="option-group">
-                <button class="opt-btn selected" id="m-en-jp" onclick="setMode('en-jp')">英語 → 日本語</button>
-                <button class="opt-btn" id="m-jp-en" onclick="setMode('jp-en')">日本語 → 英語</button>
-            </div>
-        </div>
-        <div class="setup-group">
-            <label>順序</label>
-            <div class="option-group">
-                <button class="opt-btn selected" id="o-asc" onclick="setOrder('asc')">順番どおり</button>
-                <button class="opt-btn" id="o-rand" onclick="setOrder('rand')">ランダム</button>
-            </div>
-        </div>
-        <div class="setup-group">
-            <label>回答方法</label>
-            <div class="option-group">
-                <button class="opt-btn selected" id="a-voice" onclick="setAnsMethod('voice')">音声</button>
-                <button class="opt-btn" id="a-write" onclick="setAnsMethod('write')">手書き</button>
-                <button class="opt-btn" id="a-none" onclick="setAnsMethod('none')">表示のみ</button>
-            </div>
-        </div>
-        <div class="setup-group">
-            <label>出題範囲 (1-100)</label>
+            <label>出題範囲を指定</label>
             <div style="display:flex; gap:10px;">
                 <input type="number" id="range-start" value="1" style="width:100%; padding:15px; font-size:1.2rem; border-radius:8px; border:1px solid #ccc;">
                 <span style="align-self:center">～</span>
-                <input type="number" id="range-end" value="100" style="width:100%; padding:15px; font-size:1.2rem; border-radius:8px; border:1px solid #ccc;">
+                <input type="number" id="range-end" value="200" style="width:100%; padding:15px; font-size:1.2rem; border-radius:8px; border:1px solid #ccc;">
+            </div>
+            <p style="font-size:0.8rem; color:var(--gray); margin-top:10px;">※現在は1〜200番まで登録済み</p>
+        </div>
+        
+        <div class="setup-group">
+            <label>学習モード</label>
+            <div class="option-group">
+                <button class="opt-btn selected" id="m-en-jp" onclick="setMode('en-jp')">英語→日本語</button>
+                <button class="opt-btn" id="m-jp-en" onclick="setMode('jp-en')">日本語→英語</button>
             </div>
         </div>
-        <button class="main-btn btn-start" onclick="startLesson()">トレーニング開始</button>
+
+        <div class="setup-group">
+            <label>順序 / 回答方法</label>
+            <div class="option-group" style="margin-bottom:10px;">
+                <button class="opt-btn selected" id="o-asc" onclick="setOrder('asc')">順番通り</button>
+                <button class="opt-btn" id="o-rand" onclick="setOrder('rand')">ランダム</button>
+            </div>
+            <div class="option-group">
+                <button class="opt-btn selected" id="a-voice" onclick="setAnsMethod('voice')">音声</button>
+                <button class="opt-btn" id="a-write" onclick="setAnsMethod('write')">手書き</button>
+            </div>
+        </div>
+
+        <button class="main-btn btn-start" onclick="startLesson()">特訓開始</button>
     </div>
 
     <div id="quiz-screen" class="screen">
         <div id="progress-text" style="font-weight:bold; color:var(--gray);">1 / 100</div>
         <div class="target-word" id="target-display">---</div>
-        
         <div id="ui-voice" class="input-area">
             <div class="recognition-box" id="voice-output">（待機中）</div>
             <button class="btn-clear" onclick="clearInput()">入力をクリア</button>
         </div>
-        
         <div id="ui-write" class="input-area" style="display:none;">
-            <input type="text" class="handwriting-input" id="text-answer" placeholder="ここに書く" 
-                   autocomplete="off" autocapitalize="none" spellcheck="false" oninput="this.value = this.value.toLowerCase()">
+            <input type="text" class="handwriting-input" id="text-answer" placeholder="ここに書く" oninput="this.value = this.value.toLowerCase()">
             <button class="btn-clear" onclick="clearInput()" style="margin-top:10px;">書き直し</button>
         </div>
-
         <button class="main-btn btn-show" id="show-answer-btn" onclick="revealAnswer()">回答を表示</button>
         <div class="answer-display" id="correct-answer">---</div>
         <div class="btn-group" id="judge-btns">
@@ -112,107 +96,15 @@
 </div>
 
 <script>
+    // ★単語データベース（ここに追記していく）
     const masterList = [
-        {en:"let", jp:"～に…させる"},
-        {en:"create", jp:"をつくり出す、を創造する"},
-        {en:"cause", jp:"を引き起こす、の原因となる"},
-        {en:"increase", jp:"増加する、を増やす"},
-        {en:"leave", jp:"を…のままにしておく、を置き忘れる、を去る"},
-        {en:"develop", jp:"を開発する、を発達させる、発展する"},
-        {en:"reduce", jp:"を減らす、を小さくする"},
-        {en:"improve", jp:"を進歩［向上］させる、良くなる"},
-        {en:"produce", jp:"を作る、を引き起こす"},
-        {en:"agree", jp:"意見が一致する、同意する"},
-        {en:"tell", jp:"がわかる、を見分ける"},
-        {en:"allow", jp:"を許す"},
-        {en:"prepare", jp:"を準備する、を用意する"},
-        {en:"own", jp:"を所有している"},
-        {en:"check", jp:"を検査［点検］する、を阻止する"},
-        {en:"suggest", jp:"を提案する、を示す"},
-        {en:"cost", jp:"（費用）がかかる、を犠牲にさせる"},
-        {en:"expect", jp:"を予想する、を期待する"},
-        {en:"decide", jp:"を決める、に決着をつける"},
-        {en:"provide", jp:"を供給する、を提供する"},
-        {en:"continue", jp:"続く、を続ける"},
-        {en:"include", jp:"を含んでいる、を込める"},
-        {en:"remain", jp:"ままでいる、残る"},
-        {en:"design", jp:"を設計する、を計画する"},
-        {en:"control", jp:"を規制する、を統制する"},
-        {en:"experience", jp:"を経験する、を味わう"},
-        {en:"increase", jp:"を増やす、を増大させる"},
-        {en:"mention", jp:"について述べる、に言及する"},
-        {en:"offer", jp:"を提供する、を申し出る"},
-        {en:"apply", jp:"申し込む、を適用する"},
-        {en:"identify", jp:"を確認する、を特定する"},
-        {en:"guess", jp:"を推測する、と思う"},
-        {en:"deliver", jp:"を配達する、を渡す"},
-        {en:"express", jp:"を表現する、を述べる"},
-        {en:"appear", jp:"現れる、のように見える"},
-        {en:"perform", jp:"を行う、を果たす"},
-        {en:"finish", jp:"を終える、終わる"},
-        {en:"happen", jp:"起こる、たまたま～する"},
-        {en:"reach", jp:"に到着する、に達する"},
-        {en:"suppose", jp:"と思う、を仮定する"},
-        {en:"consider", jp:"を検討する、をよく考える"},
-        {en:"discuss", jp:"について話し合う、を議論する"},
-        {en:"receive", jp:"を受け取る、を受ける"},
-        {en:"explain", jp:"を説明する、を明らかにする"},
-        {en:"notice", jp:"に気づく、に注目する"},
-        {en:"realize", jp:"を悟る、を実現する"},
-        {en:"manage", jp:"を経営する、を何とか成し遂げる"},
-        {en:"achieve", jp:"を達成する、を成し遂げる"},
-        {en:"compare", jp:"を比較する、をたとえる"},
-        {en:"refuse", jp:"を断る、を拒む"},
-        {en:"order", jp:"を注文する、を命じる"},
-        {en:"support", jp:"を支持する、を支える"},
-        {en:"present", jp:"を贈る、を提示する"},
-        {en:"charge", jp:"を請求する、を負わせる"},
-        {en:"supply", jp:"を供給する、を与える"},
-        {en:"describe", jp:"を述べる、を描写する"},
-        {en:"contact", jp:"と連絡を取る、と接触する"},
-        {en:"follow", jp:"に続く、に従う"},
-        {en:"suppose", jp:"を仮定する、と思う"},
-        {en:"contain", jp:"を含んでいる、を封じ込める"},
-        {en:"measure", jp:"を測る、を見積もる"},
-        {en:"publish", jp:"を出版する、を発表する"},
-        {en:"spread", jp:"広がる、を広げる"},
-        {en:"depend", jp:"依存する、次第である"},
-        {en:"affect", jp:"に影響を与える、を感動させる"},
-        {en:"demand", jp:"を要求する、を必要とする"},
-        {en:"reserve", jp:"を予約する、をとっておく"},
-        {en:"advertise", jp:"を宣伝する、を公告する"},
-        {en:"establish", jp:"を設立する、を確立する"},
-        {en:"recommend", jp:"を勧める、を推薦する"},
-        {en:"promote", jp:"を促進する、を昇進させる"},
-        {en:"fix", jp:"を修理する、を固定する"},
-        {en:"solve", jp:"を解決する、を解く"},
-        {en:"attract", jp:"を引きつける、を魅了する"},
-        {en:"provide", jp:"に備える、を供給する"},
-        {en:"celebrate", jp:"を祝う、を挙行する"},
-        {en:"maintain", jp:"を維持する、を主張する"},
-        {en:"examine", jp:"を調査する、を試験する"},
-        {en:"identify", jp:"を同一視する、を確認する"},
-        {en:"announce", jp:"を発表する、を告知する"},
-        {en:"prefer", jp:"をより好む"},
-        {en:"belong", jp:"属する、のものである"},
-        {en:"attend", jp:"に出席する、の世話をする"},
-        {en:"require", jp:"を必要とする、を要求する"},
-        {en:"confirm", jp:"を確認する、を裏づける"},
-        {en:"invite", jp:"を招待する、を求める"},
-        {en:"avoid", jp:"を避ける、を回避する"},
-        {en:"increase", jp:"増大する、を増やす"},
-        {en:"participate", jp:"参加する"},
-        {en:"remove", jp:"を取り除く、を解雇する"},
-        {en:"separate", jp:"を分ける、を引き離す"},
-        {en:"deliver", jp:"（講義など）をする、を配達する"},
-        {en:"appreciate", jp:"を感謝する、を正しく評価する"},
-        {en:"protect", jp:"を保護する、を守る"},
-        {en:"waste", jp:"を浪費する、を無駄にする"},
-        {en:"indicate", jp:"を示す、を指し示す"},
-        {en:"replace", jp:"に取って代わる、を取り替える"},
-        {en:"improve", jp:"良くなる、を進歩させる"},
-        {en:"respect", jp:"を尊敬する、を尊重する"},
-        {en:"disappoint", jp:"を失望させる、をがっかりさせる"}
+        // Section 1 (0001-0100)
+        {en:"let", jp:"～に…させる"}, {en:"create", jp:"をつくり出す、を創造する"}, {en:"cause", jp:"を引き起こす、の原因となる"}, {en:"increase", jp:"増加する、を増やす"}, {en:"leave", jp:"を…のままにしておく、を置き忘れる、を去る"}, {en:"develop", jp:"を開発する、を発達させる、発展する"}, {en:"reduce", jp:"を減らす、を小さくする"}, {en:"improve", jp:"を進歩［向上］させる、良くなる"}, {en:"produce", jp:"を作る、を引き起こす"}, {en:"agree", jp:"意見が一致する、同意する"}, {en:"tell", jp:"がわかる、を見分ける"}, {en:"allow", jp:"を許す"}, {en:"prepare", jp:"を準備する、を用意する"}, {en:"own", jp:"を所有している"}, {en:"check", jp:"を検査［点検］する、を阻止する"}, {en:"suggest", jp:"を提案する、を示す"}, {en:"cost", jp:"（費用）がかかる、を犠牲にさせる"}, {en:"expect", jp:"を予想する、を期待する"}, {en:"decide", jp:"を決める、に決着をつける"}, {en:"provide", jp:"を供給する、を提供する"}, {en:"continue", jp:"続く、を続ける"}, {en:"include", jp:"を含んでいる、を込める"}, {en:"remain", jp:"ままでいる、残る"}, {en:"design", jp:"を設計する、を計画する"}, {en:"control", jp:"を規制する、を統制する"}, {en:"experience", jp:"を経験する、を味わう"}, {en:"increase", jp:"を増やす、を増大させる"}, {en:"mention", jp:"について述べる、に言及する"}, {en:"offer", jp:"を提供する、を申し出る"}, {en:"apply", jp:"申し込む、を適用する"}, {en:"identify", jp:"を確認する、を特定する"}, {en:"guess", jp:"を推測する、と思う"}, {en:"deliver", jp:"を配達する、を渡す"}, {en:"express", jp:"を表現する、を述べる"}, {en:"appear", jp:"現れる、のように見える"}, {en:"perform", jp:"を行う、を果たす"}, {en:"finish", jp:"を終える、終わる"}, {en:"happen", jp:"起こる、たまたま～する"}, {en:"reach", jp:"に到着する、に達する"}, {en:"suppose", jp:"と思う、を仮定する"}, {en:"consider", jp:"を検討する、をよく考える"}, {en:"discuss", jp:"について話し合う、を議論する"}, {en:"receive", jp:"を受け取る、を受ける"}, {en:"explain", jp:"を説明する、を明らかにする"}, {en:"notice", jp:"に気づく、に注目する"}, {en:"realize", jp:"を悟る、を実現する"}, {en:"manage", jp:"を経営する、を何とか成し遂げる"}, {en:"achieve", jp:"を達成する、を成し遂げる"}, {en:"compare", jp:"を比較する、をたとえる"}, {en:"refuse", jp:"を断る、を拒む"}, {en:"order", jp:"を注文する、を命じる"}, {en:"support", jp:"を支持する、を支える"}, {en:"present", jp:"を贈る、を提示する"}, {en:"charge", jp:"を請求する、を負わせる"}, {en:"supply", jp:"を供給する、を与える"}, {en:"describe", jp:"を述べる、を描写する"}, {en:"contact", jp:"と連絡を取る、と接触する"}, {en:"follow", jp:"に続く、に従う"}, {en:"suppose", jp:"を仮定する、と思う"}, {en:"contain", jp:"を含んでいる、を封じ込める"}, {en:"measure", jp:"を測る、を見積もる"}, {en:"publish", jp:"を出版する、を発表する"}, {en:"spread", jp:"広がる、を広げる"}, {en:"depend", jp:"依存する、次第である"}, {en:"affect", jp:"に影響を与える、を感動させる"}, {en:"demand", jp:"を要求する、を必要とする"}, {en:"reserve", jp:"を予約する、をとっておく"}, {en:"advertise", jp:"を宣伝する、を公告する"}, {en:"establish", jp:"を設立する、を確立する"}, {en:"recommend", jp:"を勧める、を推薦する"}, {en:"promote", jp:"を促進する、を昇進させる"}, {en:"fix", jp:"を修理する、を固定する"}, {en:"solve", jp:"を解決する、を解く"}, {en:"attract", jp:"を引きつける、を魅了する"}, {en:"provide", jp:"に備える、を供給する"}, {en:"celebrate", jp:"を祝う、を挙行する"}, {en:"maintain", jp:"を維持する、を主張する"}, {en:"examine", jp:"を調査する、を試験する"}, {en:"identify", jp:"を同一視する、を確認する"}, {en:"announce", jp:"を発表する、を告知する"}, {en:"prefer", jp:"をより好む"}, {en:"belong", jp:"属する、のものである"}, {en:"attend", jp:"に出席する、の世話をする"}, {en:"require", jp:"を必要とする、を要求する"}, {en:"confirm", jp:"を確認する、を裏づける"}, {en:"invite", jp:"を招待する、を求める"}, {en:"avoid", jp:"を避ける、を回避する"}, {en:"increase", jp:"増大する、を増やす"}, {en:"participate", jp:"参加する"}, {en:"remove", jp:"を取り除く、を解雇する"}, {en:"separate", jp:"を分ける、を引き離す"}, {en:"deliver", jp:"（講義など）をする、を配達する"}, {en:"appreciate", jp:"を感謝する、を正しく評価する"}, {en:"protect", jp:"を保護する、を守る"}, {en:"waste", jp:"を浪費する、を無駄にする"}, {en:"indicate", jp:"を示す、を指し示す"}, {en:"replace", jp:"に取って代わる、を取り替える"}, {en:"improve", jp:"良くなる、を進歩させる"}, {en:"respect", jp:"を尊敬する、を尊重する"}, {en:"disappoint", jp:"を失望させる、をがっかりさせる"},
+
+        // Section 2 (0101-0200)
+        {en:"prevent", jp:"を妨げる、を予防する"}, {en:"avoid", jp:"を避ける、を回避する"}, {en:"observe", jp:"を観察する、に気づく、を遵守する"}, {en:"maintain", jp:"を維持する、を主張する"}, {en:"reserve", jp:"を予約する、をとっておく"}, {en:"deserve", jp:"に値する"}, {en:"cost", jp:"（費用）がかかる、を犠牲にさせる"}, {en:"last", jp:"続く、持ちこたえる"}, {en:"score", jp:"（点数）を取る、を得点する"}, {en:"count", jp:"を数える、重要である"}, {en:"fine", jp:"に罰金を科す"}, {en:"share", jp:"を共有する、を分担する"}, {en:"save", jp:"を蓄える、を省く、を救う"}, {en:"close", jp:"を閉じる、を終える"}, {en:"own", jp:"を所有している"}, {en:"collect", jp:"を集める、を収集する"}, {en:"gather", jp:"を集める、集まる"}, {en:"order", jp:"を注文する、を命じる"}, {en:"check", jp:"を検査する、を点検する"}, {en:"waste", jp:"を浪費する、を無駄にする"}, {en:"borrow", jp:"を借りる"}, {en:"lend", jp:"を貸す"}, {en:"rent", jp:"を賃借りする、を賃貸しする"}, {en:"suggest", jp:"を提案する、を示す"}, {en:"recommend", jp:"を勧める、を推薦する"}, {en:"provide", jp:"を供給する、を提供する"}, {en:"supply", jp:"を供給する、を与える"}, {en:"offer", jp:"を提供する、を申し出る"}, {en:"support", jp:"を支持する、を支える"}, {en:"protect", jp:"を保護する、を守る"}, {en:"increase", jp:"増加する、を増やす"}, {en:"decrease", jp:"減少する、を減らす"}, {en:"reduce", jp:"を減らす、を小さくする"}, {en:"improve", jp:"を進歩［向上］させる、良くなる"}, {en:"develop", jp:"を開発する、を発達させる"}, {en:"produce", jp:"を作る、を引き起こす"}, {en:"create", jp:"をつくり出す、を創造する"}, {en:"establish", jp:"を設立する、を確立する"}, {en:"promote", jp:"を促進する、を昇進させる"}, {en:"celebrate", jp:"を祝う、を挙行する"}, {en:"perform", jp:"を行う、を演じる、を果たす"}, {en:"publish", jp:"を出版する、を発表する"}, {en:"advertise", jp:"を宣伝する、を公告する"}, {en:"announce", jp:"を発表する、を告知する"}, {en:"inform", jp:"を通知する、に知らせる"}, {en:"explain", jp:"を説明する、を明らかにする"}, {en:"describe", jp:"を述べる、を描写する"}, {en:"mention", jp:"について述べる、に言及する"}, {en:"discuss", jp:"について話し合う、を議論する"}, {en:"respond", jp:"返答する、反応する"}, {en:"apply", jp:"申し込む、を適用する"}, {en:"participate", jp:"参加する"}, {en:"attend", jp:"に出席する、の世話をする"}, {en:"visit", jp:"を訪れる、を訪問する"}, {en:"reach", jp:"に到着する、に達する"}, {en:"arrive", jp:"到着する"}, {en:"receive", jp:"を受け取る、を受ける"}, {en:"deliver", jp:"を配達する、を渡す、(講義など)をする"}, {en:"contact", jp:"と連絡を取る、と接触する"}, {en:"identify", jp:"を確認する、を特定する、を同一視する"}, {en:"confirm", jp:"を確認する、を裏づける"}, {en:"examine", jp:"を調査する、を試験する"}, {en:"check", jp:"を点検する、を阻止する"}, {en:"notice", jp:"に気づく、に注目する"}, {en:"realize", jp:"を悟る、を実現する"}, {en:"recognize", jp:"を認める、を見分ける"}, {en:"identify", jp:"を特定する、を同一視する"}, {en:"suppose", jp:"と思う、を仮定する"}, {en:"guess", jp:"を推測する、と思う"}, {en:"imagine", jp:"を想像する"}, {en:"believe", jp:"を信じる、と思う"}, {en:"expect", jp:"を予想する、を期待する"}, {en:"consider", jp:"を検討する、をよく考える"}, {en:"decide", jp:"を決める、に決着をつける"}, {en:"determine", jp:"を決定する、を正確に知る"}, {en:"solve", jp:"を解決する、を解く"}, {en:"fix", jp:"を修理する、を固定する"}, {en:"repair", jp:"を修理する、を修復する"}, {en:"maintain", jp:"を維持する、を整備する"}, {en:"control", jp:"を規制する、を統制する"}, {en:"manage", jp:"を経営する、を何とか成し遂げる"}, {en:"handle", jp:"を扱う、を処理する"}, {en:"affect", jp:"に影響を与える、を感動させる"}, {en:"influence", jp:"に影響を及ぼす"}, {en:"cause", jp:"を引き起こす、の原因となる"}, {en:"lead", jp:"を導く、至る"}, {en:"follow", jp:"に続く、に従う"}, {en:"accompany", jp:"に同行する、に付随する"}, {en:"contain", jp:"を含んでいる、を封じ込める"}, {en:"include", jp:"を含んでいる、を込める"}, {en:"involve", jp:"を伴う、を巻き込む"}, {en:"belong", jp:"属する、のものである"}, {en:"depend", jp:"依存する、次第である"}, {en:"rely", jp:"頼る、信頼する"}, {en:"base", jp:"の基礎を置く"}, {en:"spread", jp:"広がる、を広げる"}, {en:"measure", jp:"を測る、を見積もる"}, {en:"evaluate", jp:"を評価する、を査定する"}, {en:"appreciate", jp:"を感謝する、を正しく評価する、を鑑賞する"}, {en:"respect", jp:"を尊敬する、を尊重する"},
+
+        // ここに次の単語を追加していく
     ];
 
     let currentList = [], wrongList = [], currentIndex = 0;
@@ -232,7 +124,6 @@
         ansMethod = a;
         document.getElementById('a-voice').classList.toggle('selected', a==='voice');
         document.getElementById('a-write').classList.toggle('selected', a==='write');
-        document.getElementById('a-none').classList.toggle('selected', a==='none');
     }
 
     function initRecognition() {
@@ -297,8 +188,7 @@
         
         const uttr = new SpeechSynthesisUtterance(q.en);
         uttr.lang = 'en-US';
-        uttr.rate = 0.8;   
-        uttr.pitch = 1.15; 
+        uttr.rate = 0.8;
         window.speechSynthesis.speak(uttr);
     }
 
@@ -310,7 +200,7 @@
 
     function showResult() {
         showScreen('result-screen');
-        document.getElementById('result-summary').textContent = `全工程が完了しました。\n今回の間違い: ${wrongList.length} 件`;
+        document.getElementById('result-summary').textContent = `終了！\n間違い: ${wrongList.length} 件`;
         document.getElementById('retry-btn').style.display = (wrongList.length>0) ? 'block' : 'none';
     }
 
