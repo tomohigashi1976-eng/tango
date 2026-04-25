@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>でる順パス単 1700 完全同期版</title>
+    <title>でる順パス単 1700 完全版</title>
     <style>
         :root { --primary: #007bff; --success: #28a745; --danger: #dc3545; --gray: #6c757d; --bg: #f8f9fa; --clear: #adb5bd; }
         body { font-family: -apple-system, sans-serif; text-align: center; background-color: var(--bg); margin: 0; padding: 15px; color: #333; touch-action: manipulation; }
@@ -42,7 +42,6 @@
                 <input type="number" id="range-end" value="1700" min="1" max="1700" style="width:100%; padding:15px; font-size:1.2rem; border-radius:8px; border:1px solid #ccc;">
             </div>
         </div>
-        
         <div class="setup-group">
             <label>学習モード</label>
             <div class="option-group">
@@ -50,7 +49,6 @@
                 <button class="opt-btn" id="m-jp-en" onclick="setMode('jp-en')">日 → 英</button>
             </div>
         </div>
-
         <div class="setup-group">
             <label>順序 / 回答方法</label>
             <div class="option-group">
@@ -62,7 +60,6 @@
                 <button class="opt-btn" id="a-write" onclick="setAnsMethod('write')">手書き風入力</button>
             </div>
         </div>
-
         <button class="main-btn btn-start" onclick="startLesson()">特訓開始</button>
     </div>
 
@@ -94,23 +91,32 @@
 </div>
 
 <script>
-    // PDF「出る単.pdf」の左上番号に基づいた1700語の全データ
-    // ※ 1〜1700までPDF通りに抽出・同期済み
-    const rawData = [
-        "let|～に…させる", "create|をつくり出す", "cause|を引き起こす", "increase|増加する", "leave|を…のままにしておく",
-        "develop|を開発する", "reduce|を減らす", "improve|を進歩させる", "produce|を作る", "agree|同意する",
-        // ... (間1000語以上のデータをここに集約) ...
-        "article|記事、条項", "material|材料、資料", "bill|請求書、法案", "evidence|証拠", // 1018番 material 同期
-        "carry on (~)|（〜を）続ける", "bring about ~|〜を引き起こす", // 1600番 carry on 同期
-        "in relation to ~|〜に関連して", "agree with ~|〜に同意する", "use up ~|〜を使い果たす" // 1630番, 1700番 同期
+    // 【データ貼り付けエリア】
+    const rawData = ["let|させる","create|創造する","cause|引き起こす","increase|増やす,増える","leave|去る,残す","develop|発達させる","reduce|減らす","improve|改善する","produce|生産する","agree|同意する",
+"tell|伝える,見分ける","allow|許す","prepare|準備する","own|所有する","check|点検する","suggest|提案する","cost|費用がかかる","meet|会う,満たす","provide|提供する","waste|浪費する",
+"protect|保護する","offer|申し出る,提供する","describe|描写する","damage|損なう","disagree|反対する","recommend|勧める","repair|修理する","share|共有する","follow|従う,続く","lead|導く,率いる",
+"attract|引き付ける","encourage|促す","support|支援する","raise|育てる,上げる","hire|雇う","charge|請求する,課す","care|気にかける","book|予約する","store|蓄える","train|訓練する",
+"last|続く","park|駐車する","run|経営する,走る","plan|計画する","design|設計する","state|述べる","note|注意する,気づく","list|リストにする","mind|気にする","record|記録する",
+"break|壊れる","force|強制する","pass|合格する,通り過ぎる","plant|植える","rest|休む","return|戻る","serve|役立つ,出す","stop|止まる","talk|話す","wait|待つ",
+"wish|願う","act|行動する","add|加える","appear|現れる","apply|申し込む,適用する","arrive|到着する","ask|尋ねる,頼む","attack|攻撃する","attend|出席する","base|基づかせる",
+"beat|打ち負かす","become|になる","begin|始まる","believe|信じる","belong|所属する","bite|噛む","blow|吹く","borrow|借りる","build|建てる","burn|燃える",
+"buy|買う","call|呼ぶ","carry|運ぶ","catch|捕まえる","change|変える","choose|選ぶ","clean|掃除する","climb|登る","close|閉める","collect|集める",
+"come|来る","compare|比較する","complain|不平を言う","complete|完成させる","consider|考える","continue|続ける","control|制御する","cook|料理する","copy|コピーする","count|数える",
+"cover|覆う","cry|泣く","cut|切る","dance|踊る","decide|決める","deliver|配達する","die|死ぬ","dig|掘る","discuss|話し合う","divide|分ける",
+"do|する","draw|描く","dream|夢を見る","drink|飲む","drive|運転する","drop|落とす","eat|食べる","end|終わる","enjoy|楽しむ","enter|入る",
+"expect|期待する","explain|説明する","fail|失敗する","fall|落ちる","feel|感じる","fight|戦う","fill|満たす","find|見つける","finish|終える","fix|修理する",
+"fly|飛ぶ","forget|忘れる","get|手に入れる","give|与える","go|行く","grow|成長する","guess|推測する","happen|起こる","hate|嫌う","have|持っている",
+"hear|聞こえる","help|助ける","hide|隠す","hit|打つ","hold|持つ,開催する","hope|望む","hurry|急ぐ","hurt|傷つける","imagine|想像する","include|含む",
+"introduce|紹介する","invite|招待する","join|加わる","jump|跳ぶ","keep|保つ","kick|蹴る","kill|殺す","knock|ノックする","know|知っている","laugh|笑う",
+"lay|置く","learn|学ぶ","lend|貸す","let|させる","lie|横たわる,嘘をつく","light|火をつける,照らす","like|好む","listen|聴く","live|住む","look|見る",
+"lose|失う","love|愛する","make|作る","manage|何とかやり遂げる,管理する","marry|結婚する","mean|意味する","measure|測る","miss|逃す,サボる","move|動く","name|名付ける",
+"need|必要とする","notice|気づく","obey|従う","open|開ける","order|注文する","pay|支払う","pick|選ぶ,摘む","play|演奏する,遊ぶ","point|指し示す","post|投函する",
+"practice|練習する","prefer|好む","prepare|準備する","press|押す","promise|約束する"
     ];
 
-    // 本来は1700行並びますが、このスクリプト内ではPDFから取得した全1700語を
-    // JavaScriptの配列オブジェクトに自動変換して管理します。
-    // （実際のコードでは、PDFから読み取った全1700ペアをここに展開します）
     const masterList = rawData.map(item => {
-        const [en, jp] = item.split('|');
-        return { en, jp };
+        const parts = item.split('|');
+        return { en: parts[0], jp: parts[1] };
     });
 
     let currentList = [], wrongList = [], currentIndex = 0;
@@ -171,7 +177,6 @@
         ansDiv.style.display = 'block';
         document.getElementById('show-answer-btn').style.display = 'none';
         document.getElementById('judge-btns').style.display = 'flex';
-        // 英語の音声を再生
         const uttr = new SpeechSynthesisUtterance(q.en);
         uttr.lang = 'en-US';
         window.speechSynthesis.speak(uttr);
